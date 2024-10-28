@@ -84,6 +84,21 @@ storage ansible_host=<внешний ip-адрес> fqdn=<полное доме�
 ![localImage](./screen_II.04.1-3.png)  
 ![localImage](./Yes.png)
 
+# Ссылки на файлы:
+>[ansible.tf](./ansible.tf);    
+>[count-vm.tf](./count-vm.tf);    
+>[disk_vm.tf](./disk_vm.tf);    
+>[for_each-vm.tf](./for_each-vm.tf);    
+>[hosts.cfg](./hosts.cfg);    
+>[hosts.tftpl](./hosts.tftpl);      
+>[locals.tf](./locals.tf);     
+>[main.tf](./main.tf);     
+>[outputs.tf](./outputs.tf);      
+>[providers.tf](./providers.tf);      
+>[security.tf](./security.tf);      
+>[variables.tf](./variables.tf).     
+
+
 ## Задание 5*
 
 1. Написать output, который отобразит ВМ из ваших ресурсов count и for_each в виде списка словарей :
