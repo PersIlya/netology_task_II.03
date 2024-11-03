@@ -14,49 +14,38 @@ data "yandex_compute_image" "ubuntu" {
   family = "ubuntu-2204-lts"
 }
 
-
-variable "env"{
-  type=string
-  default="production" #создавать ли бастион
-}
-
-variable "external_acess_bastion"{
-  type=bool
-  default=true #false true создавать ли бастион
-}
-
 #создаем/не создаем бастион
 resource "yandex_compute_instance" "bastion" {
-  count = alltrue([var.env == "production",var.external_acess_bastion]) ? 1 : 0
+  count = alltrue([local.bastion_opt.env == "production",local.bastion_opt.external_acess_bastion]) ? 1 : 0
 
   connection {
-        type     = "ssh"
-        user     = "ubuntu"
+        type     = local.ssh_opt.proto
+        user     = local.ssh_opt.user_name
         host     = self.network_interface.0.nat_ip_address #можно конечно и yandex_compute_instance.bastion["network_interface"][0]["nat_ip_address"] но не нужно!
-        private_key = file("~/.ssh/id_ed25519")
-        timeout     = "120s"
+        private_key = local.ssh_opt.pubkey #file("~/.ssh/id_ed25519")
+        timeout     = local.ssh_opt.time
   }
-  name        = "bastion"  
-  hostname    = "bastion" 
-  platform_id = "standard-v1"
+  name        = local.bastion_vm.name  
+  hostname    = local.bastion_vm.name 
+  platform_id = local.bastion_vm.platform
 
   resources {
-    cores         = 2
-    memory        = 1
-    core_fraction = 20
+    cores         = local.bastion_vm.cpu
+    memory        = local.bastion_vm.ram
+    core_fraction = local.bastion_vm.fract
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = "network-hdd"
-      size     = 12
+      type     = local.bastion_vm.hdd_type
+      size     = local.bastion_vm.disk_size
     }
   }
 
   metadata = {
     serial-port-enable = 1
-    ssh-keys = local.ssh_string #"[ ${join("", ["local.ssh", ":",  "local.ssh_key"])} ]"
+    ssh-keys = "${local.ssh_opt.user_name}:${local.ssh_opt.pubkey}"
   }
 
   scheduling_policy { preemptible = true }

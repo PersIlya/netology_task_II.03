@@ -1,27 +1,27 @@
 resource "yandex_compute_instance" "example" {
   count = 2
-
-  name        = "netology-develop-platform-web-${count.index+1}" 
-  hostname    = "netology-develop-platform-web-${count.index+1}"
-  platform_id = "standard-v1"
+  
+  name        = "${local.count_vm.name}-${count.index+1}" 
+  hostname    = "${local.count_vm.name}-${count.index+1}" 
+  platform_id = local.count_vm.platform
 
   resources {
-    cores         = 2
-    memory        = 1
-    core_fraction = 20
+    cores         = local.count_vm.cpu
+    memory        = local.count_vm.ram
+    core_fraction = local.count_vm.fract
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = "network-hdd"
-      size     = 12
+      type     = local.count_vm.hdd_type
+      size     = local.count_vm.disk_size
     }
   }
 
   metadata = {
     serial-port-enable = 1
-    ssh-keys = local.ssh_string #"[ ${join("", ["local.ssh", ":", "local.ssh_key"])} ]"
+    ssh-keys = "${local.ssh_opt.user_name}:${local.ssh_opt.pubkey}" 
   }
 
   scheduling_policy { preemptible = true }

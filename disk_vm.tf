@@ -1,26 +1,26 @@
 resource "yandex_compute_disk" "disk" {
   count = 2
-  name     = "disk-${count.index+1}" 
-  type     = "network-hdd"
-  size = 1
+  name     = "${local.disk_vm.opt_disk_name}-${count.index+1}" 
+  type     = local.disk_vm.hdd_type
+  size = local.disk_vm.opt_disk_size
 }
 
 resource "yandex_compute_instance" "storage" {
-  name        = "storage-vm" 
-  hostname    = "storage-vm" 
-  platform_id = "standard-v1"
+  name        = local.disk_vm.name 
+  hostname    = local.disk_vm.name 
+  platform_id = local.disk_vm.platform
 
   resources {
-    cores         = 2
-    memory        = 1
-    core_fraction = 20
+    cores         = local.disk_vm.cpu
+    memory        = local.disk_vm.ram
+    core_fraction = local.disk_vm.fract
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = "network-hdd"
-      size     = 12
+      type     = local.disk_vm.hdd_type
+      size     = local.disk_vm.disk_size
     }
   }
 
@@ -31,7 +31,7 @@ resource "yandex_compute_instance" "storage" {
 
   metadata = {
     serial-port-enable = 1
-    ssh-keys = local.ssh_string
+    ssh-keys = "${local.ssh_opt.user_name}:${local.ssh_opt.pubkey}"
   }
 
   scheduling_policy { preemptible = true }

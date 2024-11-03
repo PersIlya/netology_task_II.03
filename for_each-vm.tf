@@ -5,25 +5,25 @@ resource "yandex_compute_instance" "db" {
 
   name        =  each.value.vm_name 
   hostname    = "${each.value.vm_name}"
-  platform_id = "standard-v1"
+  platform_id = each.value.platform
 
   resources {
     cores         = each.value.cpu
     memory        = each.value.ram
-    core_fraction = 20
+    core_fraction = each.value.fract
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = "network-hdd"
+      type     = each.value.hdd_type
       size     = each.value.disk_size
     }
   }
 
   metadata = {
     serial-port-enable = 1
-    ssh-keys = local.ssh_string
+    ssh-keys = "${local.ssh_opt.user_name}:${local.ssh_opt.pubkey}"
   }
 
   scheduling_policy { preemptible = true }
