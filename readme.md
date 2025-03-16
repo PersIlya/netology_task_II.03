@@ -1,5 +1,5 @@
 ## <p style="text-align: center;">ОТЧЕТ</p> <p style="text-align: center;">по домашним заданиям к занятию «Управляющие конструкции в коде Terraform»</p>
-## <p style="text-align: right;">Выполнил: студент Порсев И.С.</p>
+## <p style="text-align: right;">Выполнил: студент ___________.</p>
 
 
 ## Чек-лист готовности к домашнему заданию
